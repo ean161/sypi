@@ -1,0 +1,4 @@
+name: Sypi
+version: 1.0
+main: vn.ean.sypi.App
+api-version: 1.20
