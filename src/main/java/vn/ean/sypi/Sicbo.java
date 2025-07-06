@@ -82,7 +82,7 @@ public class Sicbo implements Listener {
                             
                             winnerPrac(player);
 
-                            Lib.getEcon().depositPlayer(player, amount * 2);
+                            Lib.getEcon().depositPlayer(player, (amount * 2) - (amount * 2 * 0.1));
                             player.sendMessage(String.format("Chúc mừng bạn đã thắng §e§l%d§r§f từ phiên tài xỉu", amount));
                         }
 
