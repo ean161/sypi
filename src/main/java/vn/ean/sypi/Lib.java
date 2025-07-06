@@ -1,8 +1,13 @@
 package vn.ean.sypi;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -50,5 +55,30 @@ public class Lib {
         if (!config.contains(key))
             return "";
         return config.getString(key);
+    }
+
+    public static boolean hasLicense() {
+        try {
+            URL url = new URL("https://ean.vn/models/project/sypi");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            int responseCode = conn.getResponseCode();
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(conn.getInputStream())
+            );
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            return response.toString().equals("true");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
