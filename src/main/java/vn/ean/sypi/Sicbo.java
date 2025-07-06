@@ -55,7 +55,6 @@ public class Sicbo implements Listener {
                         int d3 = (int) Lib.rand(1, 7);
                         int total = d1 + d2 + d3;
                         String result = (total <= 10 ? "xiu" : "tai");
-                        history.add(result.substring(0, 1).toUpperCase());
 
                         Bukkit.broadcast(Component.text(String.format("§fKết quả xúc xắc 1 là §a§l%d§r§f §7(§f%d §7- ? §7- ?)", d1, d1)));
                         Thread.sleep(5000);
@@ -91,6 +90,7 @@ public class Sicbo implements Listener {
 
                         bets.clear();
                         seconds.set(60);
+                        history.add(result.substring(0, 1).toUpperCase());
                     }
                 }
             } catch (InterruptedException e) {}
