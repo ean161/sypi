@@ -50,9 +50,9 @@ public class Sicbo implements Listener {
                         Bukkit.broadcast(Component.text("§fNgừng nhận cược tài xỉu sau §a30§f giây nữa"));
 
                     if (current == 0) {
-                        int d1 = (int) Lib.rand(1, 6);
-                        int d2 = (int) Lib.rand(1, 6);
-                        int d3 = (int) Lib.rand(1, 6);
+                        int d1 = (int) Lib.rand(3, 7);
+                        int d2 = (int) Lib.rand(3, 7);
+                        int d3 = (int) Lib.rand(3, 7);
                         int total = d1 + d2 + d3;
                         String result = (total <= 10 ? "xiu" : "tai");
                         history.add(result.substring(0, 1).toUpperCase());
