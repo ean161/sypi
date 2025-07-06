@@ -30,13 +30,6 @@ public class Farm implements Listener {
     private final HashMap<Location, Float> unHarvest = new HashMap<>();
 
     @EventHandler
-    public void onTest(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
-        player.sendMessage("Tested");
-    }
-
-    @EventHandler
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
 
