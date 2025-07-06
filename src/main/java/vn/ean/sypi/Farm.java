@@ -39,14 +39,11 @@ public class Farm implements Listener {
         ) {
             float size = unHarvest.get(block.getLocation());
 
-            if (rand(1, 2) <= 1)
-                return;
-
             ItemStack customMelon = new ItemStack(block.getType(), 1);
             ItemMeta meta = customMelon.getItemMeta();
 
             meta.setDisplayName(String.format(
-                "§r%s §f%s §e§l%.1f§r§fkg",
+                "§r%s §f%s §e§l%.1fkg§r",
                 getSizeTag(size),
                 (block.getType() == Material.MELON ? "Dưa hấu" : "Bí ngô"),
                 size
@@ -85,9 +82,10 @@ public class Farm implements Listener {
                 }
 
                 if (size != 0) {
-                    // player.sendMessage(String.format("%d %.1f", amount, size));
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), String.format("eco give %s %.1f", player.getName(), calcPrice(size) * amount));
-                    event.getItemDrop().remove();
+                    double total = calcPrice(size) * amount;
+                    Lib.getEcon().depositPlayer(player, total);
+                    player.sendMessage(String.format("§r§rBán thành công %d quả dưa §e§l%.1fkg§f ($%.1f x %d = §a§l$%.1f§r§f)", amount, size, calcPrice(size), amount, total));
+                    event.getItemDrop().remove();;
                 }
             }
         }
@@ -138,13 +136,13 @@ public class Farm implements Listener {
         float rand = random.nextFloat() * 10000;
 
         if (rand == 161) 
-            return rand(10, 50);
+            return Lib.rand(10, 50);
         else if (rand < 50)
-            return rand(5, 9.9f);
+            return Lib.rand(5, 9.9f);
         else if (rand < 5000)
-            return rand(0, 4.9f);
+            return Lib.rand(0.1f, 4.9f);
         
-        return rand(0, 1f);
+        return Lib.rand(0.1f, 1f);
     }
 
     public String getSizeTag(float size) {
@@ -154,10 +152,6 @@ public class Farm implements Listener {
             return "§b§lLỚN§r";
 
         return "§a§lTHƯỜNG§r";
-    }
-
-    public float rand(float min, float max) {
-        return min + ThreadLocalRandom.current().nextFloat() * (max - min);
     }
 
     public static double calcPrice(double size) {

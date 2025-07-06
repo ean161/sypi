@@ -6,14 +6,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.economy.Economy;
 
 public class Lib {
+    private static Economy econ;
+
     public static void sendMessage(Player player, String message) {
         player.sendMessage(
             ChatColor.translateAlternateColorCodes('&', String.format(
@@ -80,5 +86,22 @@ public class Lib {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static void linkEcon() {
+        if (econ != null) return;
+
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        if (rsp != null) {
+            econ = rsp.getProvider();
+        }
+    }
+
+    public static Economy getEcon() {
+        return econ;
+    }
+
+    public static float rand(float min, float max) {
+        return min + ThreadLocalRandom.current().nextFloat() * (max - min);
     }
 }
