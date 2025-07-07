@@ -21,7 +21,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class Sicbo implements Listener {
     private Thread thread;
-    private final AtomicInteger seconds = new AtomicInteger(60);
+    private final AtomicInteger seconds = new AtomicInteger(120);
 
     HashMap<Player, HashMap<String, Integer>> bets = new HashMap<>();
     ArrayList<String> history = new ArrayList<>();
@@ -62,7 +62,7 @@ public class Sicbo implements Listener {
                         Thread.sleep(7000);
                         Bukkit.broadcast(Component.text(String.format("§fKết quả xúc xắc 3 là §a§l%d§r§f §7(§f%d §7- §f%d §7- §f%d§7)", d3, d1, d2, d3)));
                         Thread.sleep(1000);
-                        Bukkit.broadcast(Component.text(String.format("§fKết quả là §e§l%s§r§f (%d nút), phiên cược mới bắt đầu", (result.equals("tai") ? "TÀI" : "XỈU"), total)));
+                        Bukkit.broadcast(Component.text(String.format("§fKết quả là §e§l%s§r§f (%d nút)", (result.equals("tai") ? "TÀI" : "XỈU"), total)));
 
                         int maxAmount = 0;
                         String bigWinner = "";
@@ -89,8 +89,11 @@ public class Sicbo implements Listener {
                             Bukkit.broadcast(Component.text(String.format("§fChúc mừng đại gia §a§l%s§r§f thắng lớn với số tiền $§e§l%d", bigWinner, maxAmount)));
 
                         bets.clear();
-                        seconds.set(60);
+                        seconds.set(120);
                         history.add(result.substring(0, 1).toUpperCase());
+
+                        Thread.sleep(500000);
+                        Bukkit.broadcast(Component.text("Phiên cược mới §abắt đầu§f, dùng lệnh §7/tx <tai/xiu/soi> [money]§f để cược/soi cầu"));
                     }
                 }
             } catch (InterruptedException e) {}

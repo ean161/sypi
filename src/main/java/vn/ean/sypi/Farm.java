@@ -32,11 +32,18 @@ public class Farm implements Listener {
     @EventHandler
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
+        Player player = event.getPlayer();
 
         if (
             (block.getType() == Material.MELON || block.getType() == Material.PUMPKIN)
             && unHarvest.containsKey(block.getLocation())
         ) {
+            ItemStack item = player.getInventory().getItemInMainHand();
+            if (!(item == null || item.getType() == Material.AIR)) {
+                unHarvest.remove(block.getLocation());
+                return;
+            }
+
             float size = unHarvest.get(block.getLocation());
 
             ItemStack customMelon = new ItemStack(block.getType(), 1);
@@ -135,7 +142,7 @@ public class Farm implements Listener {
         Random random = new Random();
         float rand = random.nextFloat() * 10000;
 
-        if (rand == 161) 
+        if (rand == 1610) 
             return Lib.rand(10, 50);
         else if (rand < 50)
             return Lib.rand(5, 9.9f);
