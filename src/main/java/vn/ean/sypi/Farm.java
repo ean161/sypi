@@ -9,7 +9,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Bee;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,20 +36,35 @@ public class Farm implements Listener {
     @EventHandler
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
-        Player player = event.getPlayer();
+        Location loc = block.getLocation();
 
-        if (
-            (block.getType() == Material.MELON || block.getType() == Material.PUMPKIN)
-            && unHarvest.containsKey(block.getLocation())
-        ) {
-            ItemStack item = player.getInventory().getItemInMainHand();
-            if (!(item == null || item.getType() == Material.AIR)) {
+        Player player = event.getPlayer();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        double radius = 1.5;
+        int beeCount = 0;
+
+        if ((block.getType() == Material.MELON || block.getType() == Material.PUMPKIN) && unHarvest.containsKey(block.getLocation())) {
+            if (!(item == null || item.getType() == Material.AIR) || Lib.rand(0, 3) <= 1) {
                 unHarvest.remove(block.getLocation());
                 return;
             }
 
-            float size = unHarvest.get(block.getLocation());
+            for (Entity entity : block.getWorld().getNearbyEntities(loc, radius, radius, radius)) {
+                if (entity instanceof Bee) {
+                    Bee bee = (Bee) entity;
 
+                    boolean isFlying = !bee.isOnGround();
+                    boolean notLeashed = !bee.isLeashed();
+
+                    if (isFlying && notLeashed) {
+                        beeCount++;
+                        bee.setHealth(Math.max(0.0, bee.getHealth() - 1.0));
+                    }
+                }
+            }
+
+            float size = unHarvest.get(block.getLocation()) * (beeCount > 0 && (Lib.rand(1, 5) < 2) ? (beeCount + 1) : 1);
+            
             ItemStack customMelon = new ItemStack(block.getType(), 1);
             ItemMeta meta = customMelon.getItemMeta();
 
@@ -59,7 +78,7 @@ public class Farm implements Listener {
             List<String> lore = new ArrayList<>();
             lore.add(String.format("§r§fCân nặng %.1fkg", size));
             lore.add("§r§7Thả xuống để bán");
-            lore.add("§r§7Vật phẩm rơi ra khi thu hoạch bằng tay");
+            lore.add("§r§7Cơ hội rơi ra khi thu hoạch bằng tay");
             meta.setLore(lore);
 
             customMelon.setItemMeta(meta);

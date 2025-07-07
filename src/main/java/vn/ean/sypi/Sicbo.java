@@ -101,11 +101,6 @@ public class Sicbo implements Listener {
         thread.start();
     }
 
-    @EventHandler
-    public void onChat(AsyncChatEvent event) {
-        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
-    }
-
     public void bet(Player player, String type, int amount) {
         if (amount < 1000) {
             player.sendMessage("Tiền cược tối thiểu từ $1000");
