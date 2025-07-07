@@ -89,10 +89,10 @@ public class Sicbo implements Listener {
                             Bukkit.broadcast(Component.text(String.format("§fChúc mừng đại gia §a§l%s§r§f thắng lớn với số tiền $§e§l%d", bigWinner, maxAmount)));
 
                         bets.clear();
-                        seconds.set(120);
                         history.add(result.substring(0, 1).toUpperCase());
 
                         Thread.sleep(500000);
+                        seconds.set(120);
                         Bukkit.broadcast(Component.text("Phiên cược mới §abắt đầu§f, dùng lệnh §7/tx <tai/xiu/soi> [money]§f để cược/soi cầu"));
                     }
                 }
