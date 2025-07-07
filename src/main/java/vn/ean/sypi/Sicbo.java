@@ -21,7 +21,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class Sicbo implements Listener {
     private Thread thread;
-    private final AtomicInteger seconds = new AtomicInteger(120);
+    private final AtomicInteger seconds = new AtomicInteger(150);
 
     HashMap<Player, HashMap<String, Integer>> bets = new HashMap<>();
     ArrayList<String> history = new ArrayList<>();
@@ -90,10 +90,10 @@ public class Sicbo implements Listener {
 
                         bets.clear();
                         history.add(result.substring(0, 1).toUpperCase());
-
-                        Thread.sleep(500000);
-                        seconds.set(120);
+                        Thread.sleep(5000);
+                        seconds.set(150);
                         Bukkit.broadcast(Component.text("Phiên cược mới §abắt đầu§f, dùng lệnh §7/tx <tai/xiu/soi> [money]§f để cược/soi cầu"));
+
                     }
                 }
             } catch (InterruptedException e) {}

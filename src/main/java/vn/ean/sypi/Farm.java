@@ -91,7 +91,7 @@ public class Farm implements Listener {
                 if (size != 0) {
                     double total = calcPrice(size) * amount;
                     Lib.getEcon().depositPlayer(player, total);
-                    player.sendMessage(String.format("§r§rBán thành công %d quả dưa §e§l%.1fkg§f ($%.1f x %d = §a§l$%.1f§r§f)", amount, size, calcPrice(size), amount, total));
+                    player.sendMessage(String.format("§r§rBán thành công %d quả §e§l%.1fkg§f ($%.1f x %d = §a§l$%.1f§r§f)", amount, size, calcPrice(size), amount, total));
                     event.getItemDrop().remove();;
                 }
             }
@@ -140,13 +140,13 @@ public class Farm implements Listener {
 
     public float getRandSize() {
         Random random = new Random();
-        float rand = random.nextFloat() * 10000;
+        float rand = random.nextFloat() * 100000;
 
         if (rand == 1610) 
             return Lib.rand(10, 50);
         else if (rand < 50)
             return Lib.rand(5, 9.9f);
-        else if (rand < 5000)
+        else if (rand < 10000)
             return Lib.rand(0.1f, 4.9f);
         
         return Lib.rand(0.1f, 1f);
