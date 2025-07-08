@@ -1,21 +1,26 @@
 package vn.ean.sypi;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.lone.itemsadder.api.CustomStack;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class Balance implements Listener {
     public static void createCard(Player player) {
         CustomStack customStack = CustomStack.getInstance("eanmc:atm");
         ItemStack item = customStack.getItemStack();
         ItemMeta meta = item.getItemMeta();
-
+        
         int cardNum = (int) Lib.rand(111111111, 999999999);
         if (meta != null) {
             meta.setDisplayName("§r§fThẻ §bngân hàng");
@@ -23,6 +28,7 @@ public class Balance implements Listener {
                 "§r§fChủ thẻ: " + player.getName(),
                 "§r§fSố thẻ: " + cardNum
             ));
+            meta.setUnbreakable(true);
             item.setItemMeta(meta);
         }
 
@@ -30,5 +36,36 @@ public class Balance implements Listener {
         Lib.setConfig("balance", String.format("%d.amount", cardNum), "0");
 
         player.getInventory().addItem(item);
+    }
+
+    @EventHandler
+    public void onCheckBalance(PlayerInteractEvent event) {
+        ItemStack item = event.getItem();
+        Player player = event.getPlayer();
+
+        if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore())
+            return;
+
+        String cardNum = "";
+        List<Component> lore = item.getItemMeta().lore();
+        if (lore != null) {
+            for (Component line : lore) {
+                String plain = LegacyComponentSerializer.legacySection().serialize(line);
+
+                cardNum = plain.split(": ")[1];
+            }
+        }
+
+        player.sendMessage("Số dư hiện tại của thẻ là §e" + Balance.getBalance(cardNum, true));
+    }
+
+    public static String getBalance(String cardNum, boolean hasFormat) {
+        String amount = Lib.getConfig("balance", cardNum + ".amount");
+        if (amount.isEmpty())
+            amount = "0";
+
+        if (hasFormat)
+            return Lib.formatNum(amount);
+        return amount;
     }
 }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
@@ -104,4 +106,29 @@ public class Lib {
     public static float rand(float min, float max) {
         return min + ThreadLocalRandom.current().nextFloat() * (max - min);
     }
+
+    public static String formatNum(String input) {
+        try {
+            long number = Long.parseLong(input);
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+            symbols.setGroupingSeparator('.');
+
+            DecimalFormat formatter = new DecimalFormat("#,###", symbols);
+            return formatter.format(number);
+        } catch (NumberFormatException e) {
+            return input;
+        }
+    }
+
+    public static int parseSafeInt(String input) {
+        if (input == null || input.trim().isEmpty())
+            return 0;
+
+        try {
+            return Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 }
