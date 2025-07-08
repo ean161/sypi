@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,8 +26,10 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
@@ -34,21 +37,21 @@ public class Farm implements Listener {
     private final HashMap<Location, Float> unHarvest = new HashMap<>();
 
     @EventHandler
+    public void onChat(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+
+    }
+
+    @EventHandler
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
         Location loc = block.getLocation();
 
         Player player = event.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
         double radius = 1.5;
         int beeCount = 0;
 
         if ((block.getType() == Material.MELON || block.getType() == Material.PUMPKIN) && unHarvest.containsKey(block.getLocation())) {
-            if (!(item == null || item.getType() == Material.AIR) || Lib.rand(0, 3) <= 1) {
-                unHarvest.remove(block.getLocation());
-                return;
-            }
-
             for (Entity entity : block.getWorld().getNearbyEntities(loc, radius, radius, radius)) {
                 if (entity instanceof Bee) {
                     Bee bee = (Bee) entity;
@@ -68,17 +71,8 @@ public class Farm implements Listener {
             ItemStack customMelon = new ItemStack(block.getType(), 1);
             ItemMeta meta = customMelon.getItemMeta();
 
-            meta.setDisplayName(String.format(
-                "§r%s §f%s §e§l%.1fkg§r",
-                getSizeTag(size),
-                (block.getType() == Material.MELON ? "Dưa hấu" : "Bí ngô"),
-                size
-            ));
-
             List<String> lore = new ArrayList<>();
             lore.add(String.format("§r§fCân nặng %.1fkg", size));
-            lore.add("§r§7Thả xuống để bán");
-            lore.add("§r§7Cơ hội rơi ra khi thu hoạch bằng tay");
             meta.setLore(lore);
 
             customMelon.setItemMeta(meta);
@@ -90,32 +84,32 @@ public class Farm implements Listener {
         }
     }
 
-    @EventHandler
-    public void onDropSell(PlayerDropItemEvent event) {
-        ItemStack item = event.getItemDrop().getItemStack();
-        int amount = item.getAmount();
+    // @EventHandler
+    // public void onDropSell(PlayerDropItemEvent event) {
+    //     ItemStack item = event.getItemDrop().getItemStack();
+    //     int amount = item.getAmount();
 
-        Player player = event.getPlayer();
+    //     Player player = event.getPlayer();
         
-        if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            List<Component> lore = item.getItemMeta().lore();
-            if (lore != null) {
-                double size = 0;
-                for (Component line : lore) {
-                    String plain = LegacyComponentSerializer.legacySection().serialize(line);
-                    if (plain.contains("Cân nặng"))
-                        size = Double.parseDouble(plain.split("Cân nặng ")[1].split("kg")[0]);
-                }
+    //     if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+    //         List<Component> lore = item.getItemMeta().lore();
+    //         if (lore != null) {
+    //             double size = 0;
+    //             for (Component line : lore) {
+    //                 String plain = LegacyComponentSerializer.legacySection().serialize(line);
+    //                 if (plain.contains("Cân nặng"))
+    //                     size = Double.parseDouble(plain.split("Cân nặng ")[1].split("kg")[0]);
+    //             }
 
-                if (size != 0) {
-                    double total = calcPrice(size) * amount;
-                    Lib.getEcon().depositPlayer(player, total);
-                    player.sendMessage(String.format("§r§rBán thành công %d quả §e§l%.1fkg§f ($%.1f x %d = §a§l$%.1f§r§f)", amount, size, calcPrice(size), amount, total));
-                    event.getItemDrop().remove();;
-                }
-            }
-        }
-    }
+    //             if (size != 0) {
+    //                 double total = calcPrice(size) * amount;
+    //                 Lib.getEcon().depositPlayer(player, total);
+    //                 player.sendMessage(String.format("§r§rBán thành công %d quả §e§l%.1fkg§f ($%.1f x %d = §a§l$%.1f§r§f)", amount, size, calcPrice(size), amount, total));
+    //                 event.getItemDrop().remove();;
+    //             }
+    //         }
+    //     }
+    // }
 
     @EventHandler
     public void onGrow(BlockGrowEvent event) {
@@ -169,15 +163,6 @@ public class Farm implements Listener {
             return Lib.rand(0.1f, 4.9f);
         
         return Lib.rand(0.1f, 1f);
-    }
-
-    public String getSizeTag(float size) {
-        if (size >= 10)
-            return "§c§lĐỘT BIẾN§r";
-        else if (size >= 5)
-            return "§b§lLỚN§r";
-
-        return "§a§lTHƯỜNG§r";
     }
 
     public static double calcPrice(double size) {
