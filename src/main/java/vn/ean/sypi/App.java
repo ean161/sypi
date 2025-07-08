@@ -1,9 +1,14 @@
 package vn.ean.sypi;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -37,10 +42,37 @@ public class App extends JavaPlugin implements Listener {
         getLogger().info("Sypi disabled");
     }
 
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        String command = event.getMessage().toLowerCase();
+        Player player = event.getPlayer();
+
+        if (command.startsWith("/iarename"))
+            return;
+
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (item != null && item.getType() != Material.AIR) {
+            if (!item.getItemMeta().getDisplayName().equalsIgnoreCase("{CA}")) {
+                player.sendMessage("Lệnh này§c không tồn tại");
+                event.setCancelled(true);
+            }
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // command.getName().equalsIgnoreCase
-
-        return false;
+        if (!command.getName().equalsIgnoreCase("ean"))
+            return true;
+        
+        switch (args[0]) {
+            case "atm":
+                Balance.createCard(Bukkit.getPlayer(args[1]));
+                sender.sendMessage("§r§fMở thẻ §athành công§f cho " + args[1]);
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 }
