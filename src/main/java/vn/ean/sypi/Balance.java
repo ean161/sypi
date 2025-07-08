@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -21,7 +22,7 @@ public class Balance implements Listener {
         ItemStack item = customStack.getItemStack();
         ItemMeta meta = item.getItemMeta();
         
-        int cardNum = (int) Lib.rand(111111111, 999999999);
+        String cardNum = String.format("%d%c", (int) Lib.rand(111111, 999999), (char) ('A' + (int) Lib.rand(1, 27)));
         if (meta != null) {
             meta.setDisplayName("§r§fThẻ §bngân hàng");
             meta.setLore(Arrays.asList(
@@ -29,11 +30,12 @@ public class Balance implements Listener {
                 "§r§fSố thẻ: " + cardNum
             ));
             meta.setUnbreakable(true);
+            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
             item.setItemMeta(meta);
         }
 
-        Lib.setConfig("balance", String.format("%d.author", cardNum), player.getName());
-        Lib.setConfig("balance", String.format("%d.amount", cardNum), "0");
+        Lib.setConfig("balance", String.format("%s.author", cardNum), player.getName());
+        Lib.setConfig("balance", String.format("%s.amount", cardNum), "0");
 
         player.getInventory().addItem(item);
     }
@@ -51,6 +53,8 @@ public class Balance implements Listener {
         if (lore != null) {
             for (Component line : lore) {
                 String plain = LegacyComponentSerializer.legacySection().serialize(line);
+                if (!plain.contains(": "))
+                    continue;
 
                 cardNum = plain.split(": ")[1];
             }

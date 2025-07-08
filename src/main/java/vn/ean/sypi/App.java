@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,11 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+
 public class App extends JavaPlugin implements Listener {
     private static App instance;
 
     Farm farm = new Farm();
     Balance balance = new Balance();
+    FPlayer fPlayer = new FPlayer();
 
     public static App getInstance() {
         return instance;
@@ -29,6 +34,7 @@ public class App extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(farm, this);
         Bukkit.getPluginManager().registerEvents(balance, this);
+        Bukkit.getPluginManager().registerEvents(fPlayer, this);
 
         if (!Lib.hasLicense()) {
             Bukkit.getLogger().info("This server has not been granted permission to use the plug-in, please contact us via email ngoaian161@gmail.com to discuss");
@@ -47,16 +53,13 @@ public class App extends JavaPlugin implements Listener {
         String command = event.getMessage().toLowerCase();
         Player player = event.getPlayer();
 
-        if (command.startsWith("/iarename"))
+        if (command.startsWith("/iarename") || player.getName().equals("aan16"))
             return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
-
-        if (item != null && item.getType() != Material.AIR) {
-            if (!item.getItemMeta().getDisplayName().equalsIgnoreCase("{CA}")) {
-                player.sendMessage("Lệnh này§c không tồn tại");
-                event.setCancelled(true);
-            }
+        if (item == null || item.getType() == Material.AIR || !item.getItemMeta().getDisplayName().equalsIgnoreCase("{CA}")) {
+            player.sendMessage("Lệnh này§c không tồn tại");
+            event.setCancelled(true);
         }
     }
 
@@ -69,6 +72,9 @@ public class App extends JavaPlugin implements Listener {
             case "atm":
                 Balance.createCard(Bukkit.getPlayer(args[1]));
                 sender.sendMessage("§r§fMở thẻ §athành công§f cho " + args[1]);
+                break;
+            case "farmer":
+                fPlayer.createFarmer((Player) sender, args[1]);
                 break;
             default:
                 break;
