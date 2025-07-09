@@ -53,7 +53,7 @@ public class Balance implements Listener {
         if (lore != null) {
             for (Component line : lore) {
                 String plain = LegacyComponentSerializer.legacySection().serialize(line);
-                if (!plain.contains(": "))
+                if (!plain.contains("Số thẻ: "))
                     continue;
 
                 cardNum = plain.split(": ")[1];

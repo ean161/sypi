@@ -34,6 +34,9 @@ public class FPlayer implements Listener {
         }
 
         Bukkit.getScheduler().runTaskTimer(App.getInstance(), () -> {
+            if (Lib.rand(0f, 1f) < 0.3f)
+                return;
+
             if (!npc.isSpawned()) return;
 
             Location current = npc.getEntity().getLocation();
@@ -76,7 +79,7 @@ public class FPlayer implements Listener {
                     }
                 }, 40L);
             }
-        }, 0L, 250L);
+        }, 0L, 50L);
     }
 
     private static Block findHarvest(Location base, int radius) {
